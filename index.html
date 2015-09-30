@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>GA-Karte von Simone & Peter</title>
+<link rel="stylesheet" href="ol.css" type="text/css">
+<script src="ol.js"></script>
+	<style>
+		/**
+	 * The zoomslider in the second map shall be placed between the zoom-in and
+	 * zoom-out buttons.
+	 */
+		#map .ol-zoom .ol-zoom-out {
+		margin-top: 204px;
+		}
+		#map .ol-zoomslider {
+		background-color: transparent;
+		top: 2.3em;
+		}
+		
+		#map .ol-touch .ol-zoom .ol-zoom-out {
+		margin-top: 212px;
+		}
+		#map .ol-touch .ol-zoomslider {
+		top: 2.75em;
+		}
+		
+		#map .ol-zoom-in.ol-has-tooltip:hover [role=tooltip],
+		#map .ol-zoom-in.ol-has-tooltip:focus [role=tooltip] {
+		top: 3px;
+		}
+		
+		#map .ol-zoom-out.ol-has-tooltip:hover [role=tooltip],
+		#map .ol-zoom-out.ol-has-tooltip:focus [role=tooltip] {
+		top: 232px;
+		}	
+</style>
+</head>
+<body>
+	<div class="container-fluid">
+		<div style="font-family: Quattrocento Sans, Arial, Verdana, Helvetica, sans-serif; font-weight: bold; font-size: 36px; text-align: center; color: rgba(102, 0, 205, 1)">GA-Karte von Simone & Peter</div>
+		<div id="map" style="width: 100%; height: 100%;"></div>
+	</div>
+<script>
+var createPointStyleFunction = function() {
+  return function(feature, resolution) {
+    var style = new ol.style.Style({
+      image: new ol.style.Circle({
+        radius: 6,
+        fill: new ol.style.Fill({color: 'rgba(102, 0, 205, 0.5)'}),
+        stroke: new ol.style.Stroke({color: 'rgba(102, 0, 205, 1)', width: 2})
+      }),
+      text: createTextStyle(feature)
+    });
+    return [style];
+  };
+};
+
+var createTextStyle = function(feature) {
+  return new ol.style.Text({
+    textAlign: 'right',
+    textBaseline: 'middle',
+    font: 'bold 11px Quattrocento Sans, Arial, Verdana, Helvetica, sans-serif',
+    text: feature.get('name'),
+    fill: new ol.style.Fill({color: 'rgba(102, 0, 205, 0.75)'}),
+    stroke: new ol.style.Stroke({color: '#ffffff', width: 1.5}),
+    offsetX: -10,
+    offsetY: 0,
+    rotation: 0
+  });
+};
+
+var map = new ol.Map({
+  layers: [
+    new ol.layer.Tile({
+      source: new ol.source.Stamen({
+        layer: 'watercolor'
+      })
+    }),
+    new ol.layer.Vector({
+      source: new ol.source.Vector({
+        url: 'https://raw.githubusercontent.com/peterschaer/ga_karte/master/ga_karte.geojson',
+        format: new ol.format.GeoJSON(),
+      }),
+      style: createPointStyleFunction()
+    })
+  ],
+  target: 'map',
+  controls: ol.control.defaults({
+    attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
+      collapsible: true
+    })
+  }),
+  view: new ol.View({
+    center: ol.proj.transform([8.15352, 46.89035], 'EPSG:4326', 'EPSG:3857'),
+    zoom: 8
+  })
+});
+zoomslider = new ol.control.ZoomSlider();
+map.addControl(zoomslider);
+</script>
+</body>
+</html>
